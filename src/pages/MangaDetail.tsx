@@ -62,49 +62,41 @@ const MangaDetail = () => {
             )}
           </div>
 
-          <Tabs defaultValue="about" className="w-full">
-            <TabsList>
-              <TabsTrigger value="about">Hakkında</TabsTrigger>
-              <TabsTrigger value="chapters">Bölümler</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="about" className="mt-6">
-              <div className="prose max-w-none">
-                <p className="text-muted-foreground">
-                  {manga.title} - {manga.tags?.join(', ')} türünde bir manga serisidir.
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <strong>Durum:</strong> Devam Ediyor
-                  </div>
-                  <div>
-                    <strong>Bölüm Sayısı:</strong> {manga.chapters.length}
-                  </div>
-                  <div>
-                    <strong>Görüntülenme:</strong> {manga.views?.toLocaleString?.('tr-TR') ?? 0}
-                  </div>
-                  <div>
-                    <strong>Kategoriler:</strong> {manga.tags?.join(', ') ?? 'Belirtilmemiş'}
-                  </div>
-                </div>
+          <div className="prose max-w-none">
+            <p className="text-muted-foreground">
+              {manga.title} - {manga.tags?.join(', ')} türünde bir manga serisidir.
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <strong>Durum:</strong> Devam Ediyor
               </div>
-            </TabsContent>
-
-            <TabsContent value="chapters" className="mt-6">
-              <div className="space-y-2">
-                {manga.chapters.map((chapter) => (
-                  <Link
-                    key={chapter.id}
-                    to={`/read/${manga.id}/${chapter.id}`}
-                    className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent transition-colors"
-                  >
-                    <span className="font-medium">{chapter.title}</span>
-                    <Button size="sm" variant="outline">Oku</Button>
-                  </Link>
-                ))}
+              <div>
+                <strong>Bölüm Sayısı:</strong> {manga.chapters.length}
               </div>
-            </TabsContent>
-          </Tabs>
+              <div>
+                <strong>Görüntülenme:</strong> {manga.views?.toLocaleString?.('tr-TR') ?? 0}
+              </div>
+              <div>
+                <strong>Kategoriler:</strong> {manga.tags?.join(', ') ?? 'Belirtilmemiş'}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Bölümler</h2>
+            <div className="space-y-2">
+              {manga.chapters.map((chapter) => (
+                <Link
+                  key={chapter.id}
+                  to={`/read/${manga.id}/${chapter.id}`}
+                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-accent transition-colors"
+                >
+                  <span className="font-medium">{chapter.title}</span>
+                  <Button size="sm" variant="outline">Oku</Button>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
