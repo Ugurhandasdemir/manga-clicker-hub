@@ -4,6 +4,7 @@ import MangaCard from "@/components/MangaCard";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Link } from "react-router-dom";
+import Autoplay from "embla-carousel-autoplay";
 
 function formatRelative(date: Date) {
   const diff = Math.max(0, Date.now() - date.getTime());
@@ -19,7 +20,7 @@ const Index = () => {
 
   const popular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6), []);
 
-  // Güncellemeler: örnek zamanlar üret
+  // Güncellemeler: örnek zamanlar üret, aynı mangadan sadece en son bölümü göster
   const updates = useMemo(() => {
     const items: { manga: Manga; chapterId: string; chapterTitle: string; uploadedAt: Date }[] = [];
     let step = 0;
@@ -31,7 +32,18 @@ const Index = () => {
         step += 1;
       });
     });
-    return items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 10);
+    
+    // Tarihe göre sırala ve aynı manga'dan sadece en son bölümü al
+    const sortedItems = items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
+    const uniqueMangas = new Map<string, typeof sortedItems[0]>();
+    
+    sortedItems.forEach(item => {
+      if (!uniqueMangas.has(item.manga.id)) {
+        uniqueMangas.set(item.manga.id, item);
+      }
+    });
+    
+    return Array.from(uniqueMangas.values()).slice(0, 10);
   }, []);
 
 
@@ -45,7 +57,10 @@ const Index = () => {
       <section id="popular" aria-labelledby="popular-heading" className="container mx-auto px-4 py-8">
         <h2 id="popular-heading" className="mb-5 text-xl font-semibold tracking-tight">Bugün En Çok Görüntülenenler</h2>
         <div className="relative">
-          <Carousel opts={{ align: "start", slidesToScroll: 2, containScroll: "trimSnaps" }}>
+          <Carousel 
+            opts={{ align: "start", slidesToScroll: 2, containScroll: "trimSnaps", loop: true }} 
+            plugins={[Autoplay({ delay: 3000 })]}
+          >
             <CarouselContent>
               {popular.map((m) => (
                 <CarouselItem key={m.id} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
