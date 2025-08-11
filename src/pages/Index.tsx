@@ -5,6 +5,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Link } from "react-router-dom";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Eye } from "lucide-react";
 
 function formatRelative(date: Date) {
   const diff = Math.max(0, Date.now() - date.getTime());
@@ -71,10 +74,13 @@ const Index = () => {
         <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncellenen Bölümler</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {updates.map((u) => (
-            <Link
+            <div
               key={`${u.manga.id}-${u.chapterId}`}
-              to={`/read/${u.manga.id}/${u.chapterId}`}
-              className="flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent"
+              onClick={() => handleOpen(u.manga)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter") handleOpen(u.manga); }}
+              className="flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent cursor-pointer"
             >
               <img
                 src={u.manga.cover}
@@ -87,24 +93,70 @@ const Index = () => {
                 <div className="text-sm text-muted-foreground">{u.chapterTitle}</div>
                 <div className="text-xs text-muted-foreground">{formatRelative(u.uploadedAt)}</div>
               </div>
-              <Button size="sm" variant="outline" className="ml-auto">Oku</Button>
-            </Link>
+              <Button size="sm" variant="outline" className="ml-auto" asChild>
+                <Link to={`/read/${u.manga.id}/${u.chapterId}`} onClick={(e) => e.stopPropagation()}>Oku</Link>
+              </Button>
+            </div>
           ))}
         </div>
       </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{selected?.title} • Bölümler</DialogTitle>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle>{selected?.title}</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-2">
-            {selected?.chapters.map((c) => (
-              <Link key={c.id} to={`/read/${selected.id}/${c.id}`} onClick={() => setOpen(false)} className="flex items-center justify-between rounded-md border p-3 hover:bg-accent">
-                <span>{c.title}</span>
-                <Button size="sm" variant="outline">Oku</Button>
-              </Link>
-            ))}
+          <div className="px-6 pb-6">
+            <Tabs defaultValue="about">
+              <TabsList className="mb-4">
+                <TabsTrigger value="about">Hakkında</TabsTrigger>
+                <TabsTrigger value="chapters">Bölümler</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="about">
+                <div className="grid gap-4 md:grid-cols-[160px,1fr]">
+                  <img
+                    src={selected?.cover ?? ''}
+                    alt={`${selected?.title ?? 'Manga'} kapak`}
+                    className="h-48 w-full max-w-[160px] rounded-md object-cover md:h-56"
+                  />
+                  <div>
+                    {selected?.tags && (
+                      <div className="flex flex-wrap gap-2">
+                        {selected.tags.map((t) => (
+                          <Badge key={t} variant="secondary">{t}</Badge>
+                        ))}
+                      </div>
+                    )}
+                    <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="inline-flex items-center gap-1"><Eye className="h-4 w-4" />{selected?.views?.toLocaleString?.('tr-TR') ?? 0} görüntülenme</span>
+                      <span>{selected?.chapters.length ?? 0} bölüm</span>
+                    </div>
+                    {selected?.updatedAt && (
+                      <div className="mt-1 text-xs text-muted-foreground">Son Güncelleme: {new Date(selected.updatedAt).toLocaleString('tr-TR')}</div>
+                    )}
+                    {selected && selected.chapters?.[0] && (
+                      <div className="mt-4">
+                        <Link to={`/read/${selected.id}/${selected.chapters[0].id}`} onClick={() => setOpen(false)}>
+                          <Button>İlk Bölümü Oku</Button>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="chapters">
+                <div className="grid gap-2">
+                  {selected?.chapters.map((c) => (
+                    <Link key={c.id} to={`/read/${selected!.id}/${c.id}`} onClick={() => setOpen(false)} className="flex items-center justify-between rounded-md border p-3 hover:bg-accent">
+                      <span>{c.title}</span>
+                      <Button size="sm" variant="outline">Oku</Button>
+                    </Link>
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </DialogContent>
       </Dialog>
