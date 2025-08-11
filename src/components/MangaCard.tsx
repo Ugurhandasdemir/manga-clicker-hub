@@ -28,9 +28,12 @@ const MangaCard = ({ manga, onOpen, className }: Props) => {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Kalıcı alt gradient, başlık okunaklı */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/85 via-background/40 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-3">
-        <div className="line-clamp-1 text-sm font-semibold">{manga.title}</div>
+        <div className="line-clamp-1 text-sm font-semibold text-card-foreground">
+          {manga.title}
+        </div>
         {manga.tags && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {manga.tags.slice(0, 2).map((t) => (
