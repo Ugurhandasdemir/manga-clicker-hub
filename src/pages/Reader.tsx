@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { mangas } from "@/data/manga";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Reader = () => {
   const { mangaId, chapterId } = useParams();
@@ -26,6 +27,12 @@ const Reader = () => {
     navigate(`/read/${manga.id}/${next.id}`);
   };
 
+  const handleChapterChange = (newChapterId: string) => {
+    if (manga) {
+      navigate(`/read/${manga.id}/${newChapterId}`);
+    }
+  };
+
   if (!manga || !chapter) {
     return (
       <main className="container mx-auto max-w-5xl py-10">
@@ -41,8 +48,20 @@ const Reader = () => {
           <Button variant="secondary" onClick={() => navigate(-1)} className="gap-2">
             <ArrowLeft className="h-4 w-4" /> Geri
           </Button>
-          <div className="ml-2 line-clamp-1 text-sm text-muted-foreground">
-            {manga.title} • {chapter.title}
+          <div className="ml-2 flex items-center gap-3">
+            <span className="text-sm font-medium">{manga.title}</span>
+            <Select value={chapterId} onValueChange={handleChapterChange}>
+              <SelectTrigger className="w-auto min-w-[140px] h-8">
+                <SelectValue placeholder="Bölüm seçin" />
+              </SelectTrigger>
+              <SelectContent>
+                {manga.chapters.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="ml-auto flex gap-2">
             <Button variant="outline" onClick={goPrev} disabled={chapterIndex <= 0}>
