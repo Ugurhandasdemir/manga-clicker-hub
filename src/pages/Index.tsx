@@ -78,18 +78,18 @@ const Index = () => {
             <Link
               key={`${u.manga.id}-${u.chapterId}`}
               to={`/manga/${u.manga.id}`}
-              className="flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent"
+              className="flex items-center gap-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent"
             >
               <img
                 src={u.manga.cover}
                 alt={`${u.manga.title} kapak`}
                 loading="lazy"
-                className="h-20 w-16 shrink-0 rounded-md object-cover"
+                className="h-24 w-20 shrink-0 rounded-md object-cover"
               />
               <div className="min-w-0">
-                <div className="line-clamp-1 font-medium">{u.manga.title}</div>
-                <div className="text-sm text-muted-foreground">{u.chapterTitle}</div>
-                <div className="text-xs text-muted-foreground">{formatRelative(u.uploadedAt)}</div>
+                <div className="line-clamp-1 text-lg font-medium">{u.manga.title}</div>
+                <div className="text-base text-muted-foreground">{u.chapterTitle}</div>
+                <div className="text-sm text-muted-foreground">{formatRelative(u.uploadedAt)}</div>
               </div>
               <Button size="sm" variant="outline" className="ml-auto" asChild>
                 <Link to={`/read/${u.manga.id}/${u.chapterId}`} onClick={(e) => e.stopPropagation()}>Oku</Link>
