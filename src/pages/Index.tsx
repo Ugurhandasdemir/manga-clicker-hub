@@ -3,6 +3,7 @@ import { mangas, Manga } from "@/data/manga";
 import MangaCard from "@/components/MangaCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Link } from "react-router-dom";
 
 function formatRelative(date: Date) {
@@ -50,10 +51,18 @@ const Index = () => {
 
       <section id="popular" aria-labelledby="popular-heading" className="container mx-auto px-4 py-8">
         <h2 id="popular-heading" className="mb-5 text-xl font-semibold tracking-tight">Bugün En Çok Görüntülenenler</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {popular.map((m) => (
-            <MangaCard key={m.id} manga={m} onOpen={handleOpen} />
-          ))}
+        <div className="relative">
+          <Carousel opts={{ align: "start", slidesToScroll: 2, containScroll: "trimSnaps" }}>
+            <CarouselContent>
+              {popular.map((m) => (
+                <CarouselItem key={m.id} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
+                  <MangaCard manga={m} onOpen={handleOpen} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden md:flex" />
+            <CarouselNext className="hidden md:flex" />
+          </Carousel>
         </div>
       </section>
 
