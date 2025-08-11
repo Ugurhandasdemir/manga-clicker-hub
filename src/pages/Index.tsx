@@ -1,13 +1,9 @@
 import { useMemo, useState } from "react";
 import { mangas, Manga } from "@/data/manga";
 import MangaCard from "@/components/MangaCard";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Link } from "react-router-dom";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Eye } from "lucide-react";
 
 function formatRelative(date: Date) {
   const diff = Math.max(0, Date.now() - date.getTime());
@@ -20,8 +16,6 @@ function formatRelative(date: Date) {
 }
 
 const Index = () => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Manga | null>(null);
 
   const popular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6), []);
 
@@ -40,10 +34,6 @@ const Index = () => {
     return items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 10);
   }, []);
 
-  const handleOpen = (m: Manga) => {
-    setSelected(m);
-    setOpen(true);
-  };
 
   return (
     <main>
@@ -59,7 +49,7 @@ const Index = () => {
             <CarouselContent>
               {popular.map((m) => (
                 <CarouselItem key={m.id} className="basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/6">
-                  <MangaCard manga={m} onOpen={handleOpen} />
+                  <MangaCard manga={m} />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -74,13 +64,10 @@ const Index = () => {
         <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncellenen Bölümler</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {updates.map((u) => (
-            <div
+            <Link
               key={`${u.manga.id}-${u.chapterId}`}
-              onClick={() => handleOpen(u.manga)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter") handleOpen(u.manga); }}
-              className="flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent cursor-pointer"
+              to={`/manga/${u.manga.id}`}
+              className="flex items-center gap-4 rounded-lg border bg-card p-3 transition-colors hover:bg-accent"
             >
               <img
                 src={u.manga.cover}
@@ -96,70 +83,11 @@ const Index = () => {
               <Button size="sm" variant="outline" className="ml-auto" asChild>
                 <Link to={`/read/${u.manga.id}/${u.chapterId}`} onClick={(e) => e.stopPropagation()}>Oku</Link>
               </Button>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden">
-          <DialogHeader className="p-6 pb-2">
-            <DialogTitle>{selected?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="px-6 pb-6">
-            <Tabs defaultValue="about">
-              <TabsList className="mb-4">
-                <TabsTrigger value="about">Hakkında</TabsTrigger>
-                <TabsTrigger value="chapters">Bölümler</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="about">
-                <div className="grid gap-4 md:grid-cols-[160px,1fr]">
-                  <img
-                    src={selected?.cover ?? ''}
-                    alt={`${selected?.title ?? 'Manga'} kapak`}
-                    className="h-48 w-full max-w-[160px] rounded-md object-cover md:h-56"
-                  />
-                  <div>
-                    {selected?.tags && (
-                      <div className="flex flex-wrap gap-2">
-                        {selected.tags.map((t) => (
-                          <Badge key={t} variant="secondary">{t}</Badge>
-                        ))}
-                      </div>
-                    )}
-                    <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="inline-flex items-center gap-1"><Eye className="h-4 w-4" />{selected?.views?.toLocaleString?.('tr-TR') ?? 0} görüntülenme</span>
-                      <span>{selected?.chapters.length ?? 0} bölüm</span>
-                    </div>
-                    {selected?.updatedAt && (
-                      <div className="mt-1 text-xs text-muted-foreground">Son Güncelleme: {new Date(selected.updatedAt).toLocaleString('tr-TR')}</div>
-                    )}
-                    {selected && selected.chapters?.[0] && (
-                      <div className="mt-4">
-                        <Link to={`/read/${selected.id}/${selected.chapters[0].id}`} onClick={() => setOpen(false)}>
-                          <Button>İlk Bölümü Oku</Button>
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="chapters">
-                <div className="grid gap-2">
-                  {selected?.chapters.map((c) => (
-                    <Link key={c.id} to={`/read/${selected!.id}/${c.id}`} onClick={() => setOpen(false)} className="flex items-center justify-between rounded-md border p-3 hover:bg-accent">
-                      <span>{c.title}</span>
-                      <Button size="sm" variant="outline">Oku</Button>
-                    </Link>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Structured Data */}
       <script

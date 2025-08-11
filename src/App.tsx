@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Reader from "./pages/Reader";
 import AllManga from "./pages/AllManga";
+import MangaDetail from "./pages/MangaDetail";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/manga" element={<AllManga />} />
+          <Route path="/manga/:id" element={<MangaDetail />} />
           <Route path="/read/:mangaId/:chapterId" element={<Reader />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -1,25 +1,24 @@
 import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Manga } from "@/data/manga";
 
 type Props = {
   manga: Manga;
-  onOpen: (m: Manga) => void;
+  onOpen?: (m: Manga) => void;
   className?: string;
 };
 
 const MangaCard = ({ manga, onOpen, className }: Props) => {
-  return (
-    <Card
-      role="button"
-      onClick={() => onOpen(manga)}
-      className={cn(
-        "group relative overflow-hidden border-0 bg-card/60 shadow-sm transition-all hover:shadow-lg focus-visible:ring-2",
-        "rounded-lg",
-        className
-      )}
-    >
+  const handleClick = () => {
+    if (onOpen) {
+      onOpen(manga);
+    }
+  };
+
+  const cardContent = (
+    <>
       <div className="aspect-[3/4] w-full overflow-hidden">
         <img
           src={manga.cover}
@@ -44,7 +43,33 @@ const MangaCard = ({ manga, onOpen, className }: Props) => {
           </div>
         )}
       </div>
-    </Card>
+    </>
+  );
+
+  const cardClass = cn(
+    "group relative overflow-hidden border-0 bg-card/60 shadow-sm transition-all hover:shadow-lg focus-visible:ring-2",
+    "rounded-lg",
+    className
+  );
+
+  if (onOpen) {
+    return (
+      <Card
+        role="button"
+        onClick={handleClick}
+        className={cardClass}
+      >
+        {cardContent}
+      </Card>
+    );
+  }
+
+  return (
+    <Link to={`/manga/${manga.id}`}>
+      <Card className={cardClass}>
+        {cardContent}
+      </Card>
+    </Link>
   );
 };
 
