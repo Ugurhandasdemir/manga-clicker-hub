@@ -20,30 +20,26 @@ const Index = () => {
 
   const popular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6), []);
 
-  // Güncellemeler: örnek zamanlar üret, aynı mangadan sadece en son bölümü göster
+  // Güncellemeler: her mangadan en son bölümü al
   const updates = useMemo(() => {
     const items: { manga: Manga; chapterId: string; chapterTitle: string; uploadedAt: Date }[] = [];
-    let step = 0;
-    mangas.forEach((m) => {
-      m.chapters.forEach((c) => {
-        // Her bölüm için dakika adımını artır
-        const uploadedAt = new Date(Date.now() - step * 37 * 60 * 1000);
-        items.push({ manga: m, chapterId: c.id, chapterTitle: c.title, uploadedAt });
-        step += 1;
-      });
-    });
     
-    // Tarihe göre sırala ve aynı manga'dan sadece en son bölümü al
-    const sortedItems = items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime());
-    const uniqueMangas = new Map<string, typeof sortedItems[0]>();
-    
-    sortedItems.forEach(item => {
-      if (!uniqueMangas.has(item.manga.id)) {
-        uniqueMangas.set(item.manga.id, item);
+    mangas.forEach((m, mangaIndex) => {
+      // Her manga için en son bölümü al
+      const lastChapter = m.chapters[m.chapters.length - 1];
+      if (lastChapter) {
+        // Her manga için farklı bir upload zamanı oluştur
+        const uploadedAt = new Date(Date.now() - mangaIndex * 45 * 60 * 1000);
+        items.push({ 
+          manga: m, 
+          chapterId: lastChapter.id, 
+          chapterTitle: lastChapter.title, 
+          uploadedAt 
+        });
       }
     });
     
-    return Array.from(uniqueMangas.values()).slice(0, 10);
+    return items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 10);
   }, []);
 
 
