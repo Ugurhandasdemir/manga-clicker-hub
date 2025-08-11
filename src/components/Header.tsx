@@ -1,5 +1,6 @@
 import { BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Header = () => {
   return (
@@ -11,7 +12,11 @@ const Header = () => {
           </span>
           <span className="text-lg font-semibold tracking-tight">MangaWave</span>
         </Link>
-        {/* İstekte belirtildiği gibi: Manga Update / Browse / Sign In yok */}
+        <nav className="ml-auto flex items-center gap-2">
+          <Link to="/manga">
+            <Button variant="secondary" size="sm">Manga Listesi</Button>
+          </Link>
+        </nav>
       </div>
       <div className="h-[2px] bg-gradient-to-r from-primary/0 via-primary/60 to-primary/0" />
     </header>
