@@ -109,12 +109,17 @@ const Index = () => {
 
                   <ul className="space-y-1.5">
                     {u.chapters.map((chapter) => (
-                      <li key={chapter.id} className="flex items-center justify-between">
-                        <div className="min-w-0 flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
-                          <span className="text-sm font-medium truncate">{chapter.title}</span>
-                        </div>
-                        <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{formatRelative(chapter.uploadedAt)}</span>
+                      <li key={chapter.id}>
+                        <Link
+                          to={`/read/${u.manga.id}/${chapter.id}`}
+                          className="flex items-center justify-between -mx-2 px-2 py-1.5 rounded hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        >
+                          <div className="min-w-0 flex items-center gap-2">
+                            <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                            <span className="text-sm font-medium truncate">{chapter.title}</span>
+                          </div>
+                          <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{formatRelative(chapter.uploadedAt)}</span>
+                        </Link>
                       </li>
                     ))}
                   </ul>
