@@ -93,29 +93,31 @@ const Index = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {updates.map((u) => (
               <div key={u.manga.id} className="rounded-lg border bg-card p-5">
-                <Link to={`/manga/${u.manga.id}`} className="flex items-center gap-4 mb-3 hover:opacity-90 transition-opacity">
-                  <img
-                    src={u.manga.cover}
-                    alt={`${u.manga.title} kapak`}
-                    loading="lazy"
-                    className="h-36 w-28 md:h-40 md:w-32 shrink-0 rounded-md object-cover"
-                  />
-                  <div className="min-w-0">
-                    <div className="line-clamp-1 text-lg font-semibold">{u.manga.title}</div>
-                  </div>
-                </Link>
-                <div className="space-y-2 ml-32 md:ml-36">
-                  {u.chapters.map((chapter) => (
-                    <div key={chapter.id} className="flex items-center justify-between py-1.5">
-                      <div className="min-w-0 flex-1">
-                        <div className="text-sm font-medium line-clamp-1">{chapter.title}</div>
-                        <div className="text-xs text-muted-foreground">{formatRelative(chapter.uploadedAt)}</div>
-                      </div>
-                      <Button size="sm" variant="outline" className="ml-2" asChild>
-                        <Link to={`/read/${u.manga.id}/${chapter.id}`}>Oku</Link>
-                      </Button>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-[auto,1fr] gap-4 items-start">
+                  <Link to={`/manga/${u.manga.id}`} className="row-span-2 hover:opacity-90 transition-opacity">
+                    <img
+                      src={u.manga.cover}
+                      alt={`${u.manga.title} kapak`}
+                      loading="lazy"
+                      className="h-40 w-32 shrink-0 rounded-md object-cover"
+                    />
+                  </Link>
+
+                  <Link to={`/manga/${u.manga.id}`} className="min-w-0 hover:opacity-90 transition-opacity">
+                    <h3 className="line-clamp-1 text-lg font-semibold">{u.manga.title}</h3>
+                  </Link>
+
+                  <ul className="space-y-1.5">
+                    {u.chapters.map((chapter) => (
+                      <li key={chapter.id} className="flex items-center justify-between">
+                        <div className="min-w-0 flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-primary" aria-hidden="true" />
+                          <span className="text-sm font-medium truncate">{chapter.title}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{formatRelative(chapter.uploadedAt)}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}
