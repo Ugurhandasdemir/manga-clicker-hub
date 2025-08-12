@@ -67,7 +67,7 @@ const Index = () => {
       </section>
 
       <section id="popular" aria-labelledby="popular-heading" className="container mx-auto px-4 py-8">
-        <h2 id="popular-heading" className="mb-5 text-xl font-semibold tracking-tight">Bugün En Çok Görüntülenenler</h2>
+        <h2 id="popular-heading" className="mb-5 text-xl font-semibold tracking-tight">Çok Görüntülenenler</h2>
         <div className="relative">
           <Carousel 
             opts={{ align: "start", slidesToScroll: 2, containScroll: "trimSnaps", loop: true }} 
@@ -89,7 +89,7 @@ const Index = () => {
       <div className="container mx-auto px-4 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* İçerik: Güncellenen Bölümler */}
         <section aria-labelledby="updates-heading" className="lg:col-span-9">
-          <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncellenen Bölümler</h2>
+          <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncel Bölümler</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {updates.map((u) => (
               <div key={u.manga.id} className="rounded-lg border bg-card p-5">

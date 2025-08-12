@@ -18,7 +18,7 @@ const Header = () => {
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
             <BookOpen className="h-5 w-5" />
           </span>
-          <span className="text-lg font-semibold tracking-tight">MangaWave</span>
+          <span className="text-lg font-semibold tracking-tight">MangaMakine</span>
         </Link>
         <nav className="ml-auto flex items-center gap-2">
           <Link to="/manga">
