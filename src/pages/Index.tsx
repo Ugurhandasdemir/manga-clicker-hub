@@ -130,9 +130,12 @@ const Index = () => {
             <section aria-labelledby="sidebar-popular">
               <h3 id="sidebar-popular" className="mb-3 text-base font-semibold tracking-tight">Popüler Seriler</h3>
               <ul className="divide-y">
-                {sidebarPopular.map((m) => (
+                {sidebarPopular.map((m, idx) => (
                   <li key={m.id} className="py-3">
                     <Link to={`/manga/${m.id}`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-foreground text-xs font-medium">
+                        {idx + 1}
+                      </span>
                       <img
                         src={m.cover}
                         alt={`${m.title} kapak`}
@@ -151,9 +154,12 @@ const Index = () => {
             <section aria-labelledby="sidebar-new">
               <h3 id="sidebar-new" className="mb-3 text-base font-semibold tracking-tight">Yeni Seriler</h3>
               <ul className="divide-y">
-                {newSeries.map((m) => (
+                {newSeries.map((m, idx) => (
                   <li key={m.id} className="py-3">
                     <Link to={`/manga/${m.id}`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-muted text-foreground text-xs font-medium">
+                        {idx + 1}
+                      </span>
                       <img
                         src={m.cover}
                         alt={`${m.title} kapak`}
