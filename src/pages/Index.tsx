@@ -23,28 +23,42 @@ const Index = () => {
   // Güncellemeler: her mangadan en son 3 bölümü al
   const updates = useMemo(() => {
     const items: { manga: Manga; chapters: { id: string; title: string; uploadedAt: Date }[] }[] = [];
-    
+
     mangas.forEach((m, mangaIndex) => {
       // Her manga için en son 3 bölümü al
-      const last3Chapters = m.chapters.slice(-3).reverse().map((chapter, chapterIndex) => ({
-        id: chapter.id,
-        title: chapter.title,
-        uploadedAt: new Date(Date.now() - (mangaIndex * 3 + chapterIndex) * 15 * 60 * 1000)
-      }));
-      
+      const last3Chapters = m.chapters
+        .slice(-3)
+        .reverse()
+        .map((chapter, chapterIndex) => ({
+          id: chapter.id,
+          title: chapter.title,
+          uploadedAt: new Date(Date.now() - (mangaIndex * 3 + chapterIndex) * 15 * 60 * 1000),
+        }));
+
       if (last3Chapters.length > 0) {
-        items.push({ 
-          manga: m, 
-          chapters: last3Chapters
-        });
+        items.push({ manga: m, chapters: last3Chapters });
       }
     });
-    
-    return items.sort((a, b) => b.chapters[0].uploadedAt.getTime() - a.chapters[0].uploadedAt.getTime()).slice(0, 8);
+
+    return items
+      .sort((a, b) => b.chapters[0].uploadedAt.getTime() - a.chapters[0].uploadedAt.getTime())
+      .slice(0, 8);
   }, []);
 
   // Tüm zamanların en çok okunanları
   const allTimePopular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 12), []);
+
+  // Sidebar: Popüler ve Yeni Seriler
+  const sidebarPopular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 8), []);
+  const newSeries = useMemo(
+    () =>
+      mangas
+        .map((m, mangaIndex) => ({ manga: m, uploadedAt: new Date(Date.now() - mangaIndex * 3 * 15 * 60 * 1000) }))
+        .sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime())
+        .slice(0, 8)
+        .map((i) => i.manga),
+    []
+  );
 
 
   return (
@@ -74,38 +88,89 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Güncellemeler - her mangada son 3 bölüm */}
+      {/* Güncellemeler - sol tarafta popüler/yeni, sağda son 3 bölüm */}
       <section aria-labelledby="updates-heading" className="container mx-auto px-4 pb-8">
         <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncellenen Bölümler</h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {updates.map((u) => (
-            <div key={u.manga.id} className="rounded-lg border bg-card p-4">
-              <Link to={`/manga/${u.manga.id}`} className="flex items-center gap-4 mb-3 hover:opacity-80 transition-opacity">
-                <img
-                  src={u.manga.cover}
-                  alt={`${u.manga.title} kapak`}
-                  loading="lazy"
-                  className="h-20 w-16 shrink-0 rounded-md object-cover"
-                />
-                <div className="min-w-0">
-                  <div className="line-clamp-1 text-lg font-medium">{u.manga.title}</div>
-                </div>
-              </Link>
-              <div className="space-y-2 ml-20">
-                {u.chapters.map((chapter) => (
-                  <div key={chapter.id} className="flex items-center justify-between py-1">
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-medium line-clamp-1">{chapter.title}</div>
-                      <div className="text-xs text-muted-foreground">{formatRelative(chapter.uploadedAt)}</div>
-                    </div>
-                    <Button size="sm" variant="outline" className="ml-2" asChild>
-                      <Link to={`/read/${u.manga.id}/${chapter.id}`}>Oku</Link>
-                    </Button>
-                  </div>
-                ))}
-              </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Sidebar */}
+          <aside className="hidden lg:block lg:col-span-3" aria-labelledby="sidebar-heading">
+            <div className="sticky top-24 space-y-6">
+              <section aria-labelledby="sidebar-popular">
+                <h3 id="sidebar-popular" className="mb-3 text-base font-semibold tracking-tight">Popüler Seriler</h3>
+                <ul className="divide-y">
+                  {sidebarPopular.map((m) => (
+                    <li key={m.id} className="py-3">
+                      <Link to={`/manga/${m.id}`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                        <img
+                          src={m.cover}
+                          alt={`${m.title} kapak`}
+                          loading="lazy"
+                          className="h-14 w-10 shrink-0 rounded object-cover"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium line-clamp-2">{m.title}</div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section aria-labelledby="sidebar-new">
+                <h3 id="sidebar-new" className="mb-3 text-base font-semibold tracking-tight">Yeni Seriler</h3>
+                <ul className="divide-y">
+                  {newSeries.map((m) => (
+                    <li key={m.id} className="py-3">
+                      <Link to={`/manga/${m.id}`} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                        <img
+                          src={m.cover}
+                          alt={`${m.title} kapak`}
+                          loading="lazy"
+                          className="h-14 w-10 shrink-0 rounded object-cover"
+                        />
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium line-clamp-2">{m.title}</div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             </div>
-          ))}
+          </aside>
+
+          {/* İçerik */}
+          <div className="lg:col-span-9 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {updates.map((u) => (
+              <div key={u.manga.id} className="rounded-lg border bg-card p-4">
+                <Link to={`/manga/${u.manga.id}`} className="flex items-center gap-4 mb-3 hover:opacity-90 transition-opacity">
+                  <img
+                    src={u.manga.cover}
+                    alt={`${u.manga.title} kapak`}
+                    loading="lazy"
+                    className="h-28 w-20 md:h-32 md:w-24 shrink-0 rounded-md object-cover"
+                  />
+                  <div className="min-w-0">
+                    <div className="line-clamp-1 text-lg font-medium">{u.manga.title}</div>
+                  </div>
+                </Link>
+                <div className="space-y-2 ml-24 md:ml-28">
+                  {u.chapters.map((chapter) => (
+                    <div key={chapter.id} className="flex items-center justify-between py-1">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium line-clamp-1">{chapter.title}</div>
+                        <div className="text-xs text-muted-foreground">{formatRelative(chapter.uploadedAt)}</div>
+                      </div>
+                      <Button size="sm" variant="outline" className="ml-2" asChild>
+                        <Link to={`/read/${u.manga.id}/${chapter.id}`}>Oku</Link>
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
