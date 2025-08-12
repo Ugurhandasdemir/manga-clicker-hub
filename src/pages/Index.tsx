@@ -20,27 +20,31 @@ const Index = () => {
 
   const popular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6), []);
 
-  // Güncellemeler: her mangadan en son bölümü al
+  // Güncellemeler: her mangadan en son 3 bölümü al
   const updates = useMemo(() => {
-    const items: { manga: Manga; chapterId: string; chapterTitle: string; uploadedAt: Date }[] = [];
+    const items: { manga: Manga; chapters: { id: string; title: string; uploadedAt: Date }[] }[] = [];
     
     mangas.forEach((m, mangaIndex) => {
-      // Her manga için en son bölümü al
-      const lastChapter = m.chapters[m.chapters.length - 1];
-      if (lastChapter) {
-        // Her manga için farklı bir upload zamanı oluştur
-        const uploadedAt = new Date(Date.now() - mangaIndex * 45 * 60 * 1000);
+      // Her manga için en son 3 bölümü al
+      const last3Chapters = m.chapters.slice(-3).reverse().map((chapter, chapterIndex) => ({
+        id: chapter.id,
+        title: chapter.title,
+        uploadedAt: new Date(Date.now() - (mangaIndex * 3 + chapterIndex) * 15 * 60 * 1000)
+      }));
+      
+      if (last3Chapters.length > 0) {
         items.push({ 
           manga: m, 
-          chapterId: lastChapter.id, 
-          chapterTitle: lastChapter.title, 
-          uploadedAt 
+          chapters: last3Chapters
         });
       }
     });
     
-    return items.sort((a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime()).slice(0, 10);
+    return items.sort((a, b) => b.chapters[0].uploadedAt.getTime() - a.chapters[0].uploadedAt.getTime()).slice(0, 8);
   }, []);
+
+  // Tüm zamanların en çok okunanları
+  const allTimePopular = useMemo(() => [...mangas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 12), []);
 
 
   return (
@@ -70,31 +74,47 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Güncellemeler - her satırda 2 kart */}
-      <section aria-labelledby="updates-heading" className="container mx-auto px-4 pb-16">
+      {/* Güncellemeler - her mangada son 3 bölüm */}
+      <section aria-labelledby="updates-heading" className="container mx-auto px-4 pb-8">
         <h2 id="updates-heading" className="mb-5 text-xl font-semibold tracking-tight">Güncellenen Bölümler</h2>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {updates.map((u) => (
-            <Link
-              key={`${u.manga.id}-${u.chapterId}`}
-              to={`/manga/${u.manga.id}`}
-              className="flex items-center gap-4 rounded-lg border bg-card p-4 transition-colors hover:bg-accent"
-            >
-              <img
-                src={u.manga.cover}
-                alt={`${u.manga.title} kapak`}
-                loading="lazy"
-                className="h-24 w-20 shrink-0 rounded-md object-cover"
-              />
-              <div className="min-w-0">
-                <div className="line-clamp-1 text-lg font-medium">{u.manga.title}</div>
-                <div className="text-base text-muted-foreground">{u.chapterTitle}</div>
-                <div className="text-sm text-muted-foreground">{formatRelative(u.uploadedAt)}</div>
+            <div key={u.manga.id} className="rounded-lg border bg-card p-4">
+              <Link to={`/manga/${u.manga.id}`} className="flex items-center gap-4 mb-3 hover:opacity-80 transition-opacity">
+                <img
+                  src={u.manga.cover}
+                  alt={`${u.manga.title} kapak`}
+                  loading="lazy"
+                  className="h-20 w-16 shrink-0 rounded-md object-cover"
+                />
+                <div className="min-w-0">
+                  <div className="line-clamp-1 text-lg font-medium">{u.manga.title}</div>
+                </div>
+              </Link>
+              <div className="space-y-2 ml-20">
+                {u.chapters.map((chapter) => (
+                  <div key={chapter.id} className="flex items-center justify-between py-1">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium line-clamp-1">{chapter.title}</div>
+                      <div className="text-xs text-muted-foreground">{formatRelative(chapter.uploadedAt)}</div>
+                    </div>
+                    <Button size="sm" variant="outline" className="ml-2" asChild>
+                      <Link to={`/read/${u.manga.id}/${chapter.id}`}>Oku</Link>
+                    </Button>
+                  </div>
+                ))}
               </div>
-              <Button size="sm" variant="outline" className="ml-auto" asChild>
-                <Link to={`/read/${u.manga.id}/${u.chapterId}`} onClick={(e) => e.stopPropagation()}>Oku</Link>
-              </Button>
-            </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Tüm Zamanların En Çok Okunanları */}
+      <section aria-labelledby="all-time-heading" className="container mx-auto px-4 pb-16">
+        <h2 id="all-time-heading" className="mb-5 text-xl font-semibold tracking-tight">Tüm Zamanların En Çok Okunanları</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {allTimePopular.map((manga) => (
+            <MangaCard key={manga.id} manga={manga} />
           ))}
         </div>
       </section>
@@ -108,9 +128,13 @@ const Index = () => {
             '@context': 'https://schema.org',
             '@type': 'ItemList',
             name: 'Güncellenen Manga Bölümleri',
-            itemListElement: updates.map((u, idx) => ({
-              '@type': 'ListItem', position: idx + 1, name: `${u.manga.title} - ${u.chapterTitle}`,
-            })),
+            itemListElement: updates.flatMap((u) => 
+              u.chapters.map((chapter, chapterIdx) => ({
+                '@type': 'ListItem', 
+                position: chapterIdx + 1, 
+                name: `${u.manga.title} - ${chapter.title}`,
+              }))
+            ),
           }),
         }}
       />
