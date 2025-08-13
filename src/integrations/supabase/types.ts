@@ -14,7 +14,109 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chapters: {
+        Row: {
+          created_at: string
+          id: string
+          manga_id: string
+          number: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          manga_id: string
+          number: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          manga_id?: string
+          number?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapters_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "mangas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mangas: {
+        Row: {
+          cover_key: string
+          created_at: string
+          id: string
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views: number | null
+        }
+        Insert: {
+          cover_key: string
+          created_at?: string
+          id?: string
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views?: number | null
+        }
+        Update: {
+          cover_key?: string
+          created_at?: string
+          id?: string
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views?: number | null
+        }
+        Relationships: []
+      }
+      pages: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          height: number | null
+          id: string
+          object_key: string
+          page_index: number
+          width: number | null
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          object_key: string
+          page_index: number
+          width?: number | null
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          height?: number | null
+          id?: string
+          object_key?: string
+          page_index?: number
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pages_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
