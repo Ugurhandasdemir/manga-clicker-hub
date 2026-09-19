@@ -1,73 +1,40 @@
-# Welcome to your Lovable project
+# Manga Clicker Hub
 
-## Project info
+Manga okuma sitesi arayüzü: kapak kartlarıyla katalog, seri detay sayfası ve sayfa sayfa okuyucu. React + TypeScript ile yazıldı, veri ve görsel altyapısı için Supabase şeması içerir.
 
-**URL**: https://lovable.dev/projects/23706fe4-a205-45eb-9f0b-8643379f58a1
+## Özellikler
 
-## How can I edit this code?
+- **Ana sayfa ve katalog** (`/`, `/manga`): kapak kartları, seri listesi.
+- **Seri detayı** (`/manga/:id`): bölüm listesi.
+- **Okuyucu** (`/read/:mangaId/:chapterId`): bölüm sayfalarını sırayla gösterir.
+- **Tema desteği:** açık/koyu tema.
+- **Supabase entegrasyonu:** `mangas`, `chapters`, `pages` tabloları ve `manga-covers` / `manga-pages` depolama kovaları için şema ve yardımcı fonksiyonlar; tarayıcıda WebP dönüşümü ile yükleme (`src/lib/storage.ts`).
 
-There are several ways of editing your application.
+## Teknoloji Yığını
 
-**Use Lovable**
+Vite, React 18, TypeScript, React Router 6, TanStack Query, Tailwind CSS, shadcn/ui, Supabase.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/23706fe4-a205-45eb-9f0b-8643379f58a1) and start prompting.
+## Kurulum
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+git clone https://github.com/Ugurhandasdemir/manga-clicker-hub.git
+cd manga-clicker-hub
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Kendi Supabase projenizi kullanmak için `src/integrations/supabase/client.ts` içindeki URL ve anahtarı değiştirin, `supabase/migrations/` altındaki SQL dosyasını projenize uygulayın ve `manga-covers` ile `manga-pages` kovalarını oluşturun.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Proje Yapısı
 
-**Use GitHub Codespaces**
+```
+src/
+├── pages/          # Index, AllManga, MangaDetail, Reader, NotFound
+├── components/     # Header, MangaCard, ThemeProvider, shadcn/ui bileşenleri
+├── data/manga.ts   # örnek katalog verisi
+├── lib/storage.ts  # Supabase Storage yardımcıları
+└── integrations/supabase/
+supabase/migrations/  # veritabanı şeması
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/23706fe4-a205-45eb-9f0b-8643379f58a1) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+> Proje [Lovable](https://lovable.dev) ile başlatılmıştır.
