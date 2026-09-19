@@ -2,6 +2,8 @@
 
 Manga okuma sitesi arayüzü: kapak kartlarıyla katalog, seri detay sayfası ve sayfa sayfa okuyucu. React + TypeScript ile yazıldı, veri ve görsel altyapısı için Supabase şeması içerir.
 
+**Canlı demo:** https://manga-clicker-hub.vercel.app
+
 ## Özellikler
 
 - **Ana sayfa ve katalog** (`/`, `/manga`): kapak kartları, seri listesi.
